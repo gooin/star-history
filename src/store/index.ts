@@ -1,6 +1,7 @@
 import { createPinia, defineStore } from "pinia";
 import storage from "../helpers/storage";
-import { ChartMode } from "../../types/chart";
+import { ChartMode, ThemeMode } from "../../types/chart";
+import { ThemeNames } from "../helpers/theme";
 
 export const piniaInstance = createPinia();
 
@@ -9,6 +10,7 @@ interface AppState {
   token: string;
   repos: string[];
   chartMode: ChartMode;
+  themeMode: ThemeMode;
 }
 
 const useAppStore = defineStore("appStore", {
@@ -18,10 +20,15 @@ const useAppStore = defineStore("appStore", {
     const params = hash.split("&").filter((i) => Boolean(i));
     const repos: string[] = [];
     let chartMode: ChartMode = "Date";
+    let themeMode = ThemeNames[0];
 
     for (const value of params) {
       if (value === "Date" || value === "Timeline") {
         chartMode = value;
+        continue;
+      }
+      if (ThemeNames.includes(value as ThemeMode)) {
+        themeMode = value as ThemeMode;
         continue;
       }
       if (!repos.includes(value)) {
@@ -33,6 +40,7 @@ const useAppStore = defineStore("appStore", {
       isFetching: false,
       token: accessTokenCache || "",
       repos: repos,
+      themeMode: themeMode,
       chartMode: chartMode,
     };
   },
@@ -60,6 +68,9 @@ const useAppStore = defineStore("appStore", {
     },
     setChartMode(chartMode: ChartMode) {
       this.chartMode = chartMode;
+    },
+    setThemeMode(themeMode: ThemeMode) {
+      this.themeMode = themeMode;
     },
   },
 });

@@ -1,4 +1,7 @@
+import { ThemeModeType } from "../src/helpers/theme";
+
 export type ChartMode = "Date" | "Timeline";
+export type ThemeMode = ThemeModeType;
 
 export interface RepoStarData {
   repo: string;

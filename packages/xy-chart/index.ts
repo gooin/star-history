@@ -14,6 +14,8 @@ import getFormatTimeline, {
   getTimestampFormatUnit,
 } from "./utils/getFormatTimeline";
 import { D3Selection } from "./types";
+import { ThemeMode } from "../../types/chart";
+import { getThemeOptions } from "../../src/helpers/theme";
 
 const colors = [
   "#dd4528",
@@ -55,6 +57,7 @@ export interface XYChartConfig {
   yLabel: string;
   data: XYChartData;
   showDots: boolean;
+  themeMode: ThemeMode;
 }
 
 type XTickLabelType = "Date" | "Number";
@@ -93,12 +96,20 @@ const getDefaultOptions = (): XYChartOptions => {
 
 const XYChart = (
   svg: SVGSVGElement,
-  { title, xLabel, yLabel, data: { datasets }, showDots }: XYChartConfig,
+  {
+    title,
+    xLabel,
+    yLabel,
+    data: { datasets },
+    showDots,
+    themeMode,
+  }: XYChartConfig,
   initialOptions: Partial<XYChartOptions>
 ) => {
   const options: XYChartOptions = {
     ...getDefaultOptions(),
     ...initialOptions,
+    ...getThemeOptions(themeMode),
   };
 
   if (title) {

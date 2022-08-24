@@ -35,6 +35,8 @@ import { onMounted, onUpdated, ref } from "vue";
 // 3. Totally customizable.
 import XYChart, { XYChartData } from "../../../packages/xy-chart";
 import { MIN_CHART_WIDTH } from "../../helpers/consts";
+import { ThemeMode } from "../../../types/chart";
+import { ThemeNames } from "../../helpers/theme";
 
 const props = defineProps({
   classname: {
@@ -47,6 +49,10 @@ const props = defineProps({
   chartMode: {
     type: String,
     default: "Date",
+  },
+  themeMode: {
+    type: String,
+    default: ThemeNames[0],
   },
   timeFormat: String,
 });
@@ -68,6 +74,7 @@ const drawStarChart = (data: XYChartData) => {
           datasets: data.datasets,
         },
         showDots: true,
+        themeMode: props.themeMode as ThemeMode,
       },
       {
         xTickLabelType: props.chartMode === "Date" ? "Date" : "Number",

@@ -16,14 +16,27 @@
     >
       <div
         class="flex flex-row justify-center items-center rounded leading-8 text-sm px-3 cursor-pointer z-10 text-dark select-none hover:bg-gray-100"
-        @click="handleToggleChartBtnClick"
       >
-        <input
-          class="mr-2"
-          type="checkbox"
-          :checked="chartMode === 'Timeline'"
-        />
-        Align timeline
+        <div>
+          Theme:
+          <select
+            v-model="themeMode"
+            class="mr-2"
+            @change="handleChangeThemeMode($event)"
+          >
+            <option v-for="theme in themes" :key="theme" :value="theme">
+              {{ theme }}
+            </option>
+          </select>
+        </div>
+        <div @click="handleToggleChartBtnClick">
+          <input
+            class="mr-2"
+            type="checkbox"
+            :checked="chartMode === 'Timeline'"
+          />
+          Align timeline
+        </div>
       </div>
     </div>
     <StarXYChart
@@ -31,6 +44,7 @@
       classname="w-full h-auto"
       :data="state.chartData"
       :chart-mode="chartMode"
+      :theme-mode="themeMode"
     />
   </div>
   <div
@@ -107,7 +121,8 @@ import utils from "../../common/utils";
 import { convertDataToChartData, getRepoData } from "../../common/chart";
 import api from "../../common/api";
 import toast from "../helpers/toast";
-import { RepoData } from "../../types/chart";
+import { RepoData, ThemeMode } from "../../types/chart";
+import { ThemeNames } from "../helpers/theme";
 import BytebaseBanner from "./BytebaseBanner.vue";
 import StarXYChart from "./Charts/StarXYChart.vue";
 import TokenSettingDialog from "./TokenSettingDialog.vue";
@@ -116,6 +131,7 @@ import EmbedMarkdownSection from "./EmbedMarkdownSection.vue";
 
 interface State {
   chartMode: "Date" | "Timeline";
+  themeMode: ThemeMode;
   repoCacheMap: Map<
     string,
     {
@@ -134,6 +150,7 @@ interface State {
 
 const state = reactive<State>({
   chartMode: "Date",
+  themeMode: ThemeNames[0],
   repoCacheMap: new Map(),
   chartData: undefined,
   isGeneratingImage: false,
@@ -150,6 +167,11 @@ const isFetching = computed(() => {
 const chartMode = computed(() => {
   return store.chartMode;
 });
+const themeMode = computed(() => {
+  return store.themeMode;
+});
+
+const themes = ThemeNames;
 
 onMounted(() => {
   if (store.repos.length > 0) {
@@ -414,6 +436,11 @@ const handleGenEmbedCodeDialogClose = () => {
 const handleToggleChartBtnClick = () => {
   store.setChartMode(chartMode.value === "Date" ? "Timeline" : "Date");
   fetchReposData(store.repos);
+};
+
+const handleChangeThemeMode = (event) => {
+  //TODO: find the function of "chartMode" set the url hash and set theme in url hash here.
+  store.setThemeMode(event.target.value);
 };
 
 const handleSetTokenDialogClose = () => {
